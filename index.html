@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#123c2b">
+<title>ইসলামিক সম্ভার — Admin Panel</title>
+<style>
+:root{--green:#123c2b;--green2:#1d6548;--gold:#d79a37;--bg:#f4f7f4;--ink:#18251e;--muted:#68766d;--line:#dfe8e1;--white:#fff;--red:#b42318}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Noto Sans Bengali",sans-serif}
+button,input,select,textarea{font:inherit}button{cursor:pointer;border:0;border-radius:10px;padding:11px 15px;font-weight:650}
+.primary{background:var(--green);color:white}.secondary{background:#e8f0eb;color:var(--green)}.danger{background:#fff0ee;color:var(--red)}
+header{background:linear-gradient(120deg,var(--green),#246b4c);color:#fff;padding:20px 16px}
+.head{max-width:1100px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;gap:12px;align-items:center}.logo{width:44px;height:44px;border-radius:14px;background:#ffffff20;display:grid;place-items:center;font-size:25px}
+h1{font-size:21px;margin:0}header p{margin:4px 0 0;color:#dcebe1;font-size:13px}
+main{max-width:1100px;margin:22px auto;padding:0 14px}
+.panel{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 5px 20px #163d2810}
+.login{max-width:430px;margin:7vh auto}.login h2,.section-title{margin:0 0 14px;font-size:19px}
+label{display:block;font-size:13px;font-weight:700;margin:12px 0 6px}
+input,select,textarea{width:100%;border:1px solid #ccd8cf;border-radius:10px;padding:12px;background:white;color:var(--ink);outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--green2);box-shadow:0 0 0 3px #1d654817}
+textarea{min-height:130px;resize:vertical}
+.note{font-size:12px;color:var(--muted);line-height:1.6}
+.hidden{display:none!important}.status{margin:12px 0;padding:10px 12px;border-radius:10px;background:#eef5ef;font-size:13px;white-space:pre-wrap}
+.status.error{background:#fff0ee;color:var(--red)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+.stat{background:#f5f8f5;border-radius:12px;padding:13px}.stat b{font-size:24px;display:block;color:var(--green)}.stat span{font-size:12px;color:var(--muted)}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.tab.active{background:var(--green);color:#fff}.tab{background:#e8f0eb;color:var(--green)}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,1.2fr);gap:15px;align-items:start}
+.item{border:1px solid var(--line);border-radius:12px;padding:13px;margin-top:10px}
+.item h3{font-size:15px;margin:0 0 5px}.meta{font-size:12px;color:var(--muted);line-height:1.6}.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.actions button{padding:8px 11px;font-size:12px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.check{display:flex;align-items:center;gap:9px;margin:13px 0}.check input{width:auto}
+.top-actions{display:flex;gap:8px;align-items:center}.empty{color:var(--muted);padding:20px 5px;text-align:center}
+@media(max-width:760px){.layout{grid-template-columns:1fr}.stats{gap:8px}.stat{padding:10px}.head{align-items:flex-start}h1{font-size:18px}}
+@media(max-width:420px){.row{grid-template-columns:1fr}.stats{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+<header><div class="head">
+ <div class="brand"><div class="logo">☪</div><div><h1>ইসলামিক সম্ভার</h1><p>Admin Panel · কনটেন্ট পরিচালনা</p></div></div>
+ <div class="top-actions"><button id="logoutBtn" class="secondary hidden">লগআউট</button></div>
+</div></header>
+<main>
+<section id="loginView" class="panel login">
+ <h2>অ্যাডমিন লগইন</h2>
+ <p class="note">আপনার Firebase Authentication-এ তৈরি করা Admin ইমেইল ও পাসওয়ার্ড ব্যবহার করুন।</p>
+ <form id="loginForm">
+  <label for="email">ইমেইল</label><input id="email" type="email" autocomplete="username" required placeholder="admin@example.com">
+  <label for="password">পাসওয়ার্ড</label><input id="password" type="password" autocomplete="current-password" required placeholder="পাসওয়ার্ড">
+  <button class="primary" style="width:100%;margin-top:16px">লগইন করুন</button>
+ </form><div id="loginMsg" class="status hidden"></div>
+</section>
+
+<section id="appView" class="hidden">
+ <div class="stats">
+  <div class="stat"><b id="totalCount">০</b><span>মোট কনটেন্ট</span></div>
+  <div class="stat"><b id="publishedCount">০</b><span>প্রকাশিত</span></div>
+  <div class="stat"><b id="categoryCount">০</b><span>ক্যাটাগরি</span></div>
+ </div>
+ <div class="tabs">
+  <button class="tab active" data-tab="contents">কনটেন্ট</button>
+  <button class="tab" data-tab="categories">ক্যাটাগরি</button>
+ </div>
+ <section id="contentsTab" class="layout">
+  <div class="panel">
+   <h2 class="section-title" id="formHeading">নতুন কনটেন্ট যোগ করুন</h2>
+   <form id="contentForm">
+    <input id="editId" type="hidden">
+    <label for="title">শিরোনাম *</label><input id="title" required maxlength="180" placeholder="যেমন: সকালবেলার দোয়া">
+    <div class="row">
+     <div><label for="category">ক্যাটাগরি *</label><select id="category" required></select></div>
+     <div><label for="type">কনটেন্টের ধরন</label><select id="type"><option value="text">লেখা</option><option value="audio">অডিও লিংক</option><option value="pdf">PDF লিংক</option><option value="image">ছবির লিংক</option><option value="video">ভিডিও লিংক</option></select></div>
+    </div>
+    <label for="body">বিস্তারিত লেখা</label><textarea id="body" placeholder="এখানে দোয়া, হাদিস, আর্টিকেল বা অন্যান্য লেখা লিখুন"></textarea>
+    <label for="mediaUrl">ফাইল/মিডিয়ার URL (ঐচ্ছিক)</label><input id="mediaUrl" type="url" placeholder="https://...">
+    <p class="note">এখন Firebase Storage চালু করতে পেইড প্ল্যান চাইছে, তাই এই প্যানেলে সরাসরি ফাইল আপলোড নেই। অডিও/PDF/ছবি অন্য কোথাও হোস্ট করে তার URL এখানে দিন।</p>
+    <label class="check"><input id="published" type="checkbox" checked> প্রকাশিত (ব্যবহারকারীরা দেখতে পারবে)</label>
+    <div class="actions"><button class="primary" type="submit" id="saveBtn">কনটেন্ট সংরক্ষণ</button><button class="secondary hidden" type="button" id="cancelEdit">বাতিল</button></div>
+   </form><div id="contentMsg" class="status hidden"></div>
+  </div>
+  <div class="panel">
+   <h2 class="section-title">কনটেন্ট তালিকা</h2>
+   <input id="filterInput" placeholder="শিরোনাম দিয়ে খুঁজুন...">
+   <div id="contentList"><div class="empty">লোড হচ্ছে...</div></div>
+  </div>
+ </section>
+ <section id="categoriesTab" class="layout hidden">
+  <div class="panel">
+   <h2 class="section-title">নতুন ক্যাটাগরি</h2>
+   <form id="categoryForm"><label for="categoryName">ক্যাটাগরির নাম</label><input id="categoryName" required placeholder="যেমন: ইসলামিক ইতিহাস"><button class="primary" style="margin-top:14px">ক্যাটাগরি যোগ করুন</button></form>
+   <div id="categoryMsg" class="status hidden"></div>
+  </div>
+  <div class="panel"><h2 class="section-title">ক্যাটাগরি তালিকা</h2><div id="categoryList"><div class="empty">লোড হচ্ছে...</div></div></div>
+ </section>
+</section>
+</main>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+ apiKey:"AIzaSyAAlcAg9uTyv8FXgqWp5mIgKJRqr8gzLkk",
+ authDomain:"islamic-somvar.firebaseapp.com",
+ projectId:"islamic-somvar",
+ storageBucket:"islamic-somvar.firebasestorage.app",
+ messagingSenderId:"823434968255",
+ appId:"1:823434968255:web:0c5d961c1e0d5125f91a0a"
+};
+const app=initializeApp(firebaseConfig), auth=getAuth(app), db=getFirestore(app);
+const $=id=>document.getElementById(id);
+let contents=[], categories=[], unsubContents=null, unsubCategories=null;
+
+function message(id,text,error=false){const el=$(id);el.textContent=text;el.classList.remove("hidden","error");if(error)el.classList.add("error")}
+function bn(n){return Number(n||0).toLocaleString("bn-BD")}
+function showApp(user){$("loginView").classList.toggle("hidden",!!user);$("appView").classList.toggle("hidden",!user);$("logoutBtn").classList.toggle("hidden",!user)}
+$("loginForm").addEventListener("submit",async e=>{e.preventDefault();message("loginMsg","লগইন হচ্ছে...");try{await signInWithEmailAndPassword(auth,$("email").value.trim(),$("password").value)}catch(err){message("loginMsg","লগইন হয়নি: "+err.message,true)}});
+$("logoutBtn").addEventListener("click",()=>signOut(auth));
+onAuthStateChanged(auth,user=>{showApp(user);if(user){startListeners()}else{if(unsubContents)unsubContents();if(unsubCategories)unsubCategories();}});
+function startListeners(){
+ if(unsubContents)unsubContents();if(unsubCategories)unsubCategories();
+ unsubContents=onSnapshot(collection(db,"contents"),snap=>{contents=snap.docs.map(d=>({id:d.id,...d.data()}));renderContents();updateStats()},err=>message("contentMsg","কনটেন্ট পড়তে সমস্যা: "+err.message,true));
+ unsubCategories=onSnapshot(collection(db,"categories"),snap=>{categories=snap.docs.map(d=>({id:d.id,...d.data()}));renderCategories();renderCategoryOptions();updateStats()},err=>message("categoryMsg","ক্যাটাগরি পড়তে সমস্যা: "+err.message,true));
+}
+function updateStats(){$("totalCount").textContent=bn(contents.length);$("publishedCount").textContent=bn(contents.filter(x=>x.published===true).length);$("categoryCount").textContent=bn(categories.length)}
+function renderCategoryOptions(){const sel=$("category");const old=sel.value;sel.replaceChildren();if(!categories.length){const o=document.createElement("option");o.value="";o.textContent="আগে ক্যাটাগরি যোগ করুন";sel.append(o);return}categories.sort((a,b)=>(a.name||"").localeCompare(b.name||"")).forEach(c=>{const o=document.createElement("option");o.value=c.name||"";o.textContent=c.name||"(নাম নেই)";sel.append(o)});if(categories.some(c=>c.name===old))sel.value=old}
+function renderContents(){const root=$("contentList");root.replaceChildren();const q=$("filterInput").value.trim().toLowerCase();const list=contents.filter(c=>(c.title||"").toLowerCase().includes(q)).sort((a,b)=>(b.updatedAt?.seconds||b.createdAt?.seconds||0)-(a.updatedAt?.seconds||a.createdAt?.seconds||0));if(!list.length){const p=document.createElement("div");p.className="empty";p.textContent="কোনো কনটেন্ট পাওয়া যায়নি";root.append(p);return}
+ list.forEach(c=>{const box=document.createElement("article");box.className="item";const h=document.createElement("h3");h.textContent=c.title||"শিরোনাম নেই";const meta=document.createElement("div");meta.className="meta";meta.textContent=(c.category||"ক্যাটাগরি নেই")+" · "+(c.type||"text")+" · "+(c.published?"প্রকাশিত":"খসড়া");const actions=document.createElement("div");actions.className="actions";const edit=document.createElement("button");edit.className="secondary";edit.textContent="সম্পাদনা";edit.onclick=()=>editContent(c);const del=document.createElement("button");del.className="danger";del.textContent="মুছুন";del.onclick=()=>removeContent(c);actions.append(edit,del);box.append(h,meta,actions);root.append(box)})
+}
+$("filterInput").addEventListener("input",renderContents);
+function resetForm(){$("contentForm").reset();$("editId").value="";$("published").checked=true;$("formHeading").textContent="নতুন কনটেন্ট যোগ করুন";$("saveBtn").textContent="কনটেন্ট সংরক্ষণ";$("cancelEdit").classList.add("hidden")}
+function editContent(c){$("editId").value=c.id;$("title").value=c.title||"";$("category").value=c.category||"";$("type").value=c.type||"text";$("body").value=c.body||"";$("mediaUrl").value=c.mediaUrl||"";$("published").checked=c.published===true;$("formHeading").textContent="কনটেন্ট সম্পাদনা";$("saveBtn").textContent="পরিবর্তন সংরক্ষণ";$("cancelEdit").classList.remove("hidden");window.scrollTo({top:0,behavior:"smooth"})}
+$("cancelEdit").addEventListener("click",resetForm);
+$("contentForm").addEventListener("submit",async e=>{e.preventDefault();if(!auth.currentUser)return;const id=$("editId").value;const data={title:$("title").value.trim(),category:$("category").value,type:$("type").value,body:$("body").value.trim(),mediaUrl:$("mediaUrl").value.trim(),published:$("published").checked,updatedAt:serverTimestamp()};if(!data.title||!data.category){message("contentMsg","শিরোনাম ও ক্যাটাগরি দিন।",true);return}try{if(id)await updateDoc(doc(db,"contents",id),data);else await addDoc(collection(db,"contents"),{...data,createdAt:serverTimestamp()});message("contentMsg",id?"পরিবর্তন সংরক্ষিত হয়েছে।":"নতুন কনটেন্ট যোগ হয়েছে।");resetForm()}catch(err){message("contentMsg","সংরক্ষণ হয়নি: "+err.message,true)}});
+async function removeContent(c){if(!confirm("“"+(c.title||"এই কনটেন্ট")+"” মুছে ফেলবেন?"))return;try{await deleteDoc(doc(db,"contents",c.id))}catch(err){message("contentMsg","মুছতে সমস্যা: "+err.message,true)}}
+function renderCategories(){const root=$("categoryList");root.replaceChildren();if(!categories.length){const p=document.createElement("div");p.className="empty";p.textContent="কোনো ক্যাটাগরি নেই";root.append(p);return}categories.sort((a,b)=>(a.name||"").localeCompare(b.name||"")).forEach(c=>{const box=document.createElement("div");box.className="item";const h=document.createElement("h3");h.textContent=c.name||"নাম নেই";const del=document.createElement("button");del.className="danger";del.textContent="মুছুন";del.onclick=async()=>{if(!confirm("এই ক্যাটাগরি মুছবেন? আগে এর কনটেন্ট অন্য ক্যাটাগরিতে সরিয়ে নিন।"))return;try{await deleteDoc(doc(db,"categories",c.id))}catch(err){message("categoryMsg","মুছতে সমস্যা: "+err.message,true)}};box.append(h,del);root.append(box)})}
+$("categoryForm").addEventListener("submit",async e=>{e.preventDefault();const name=$("categoryName").value.trim();if(!name)return;if(categories.some(c=>(c.name||"").toLowerCase()===name.toLowerCase())){message("categoryMsg","এই ক্যাটাগরি আগে থেকেই আছে।",true);return}try{await addDoc(collection(db,"categories"),{name,createdAt:serverTimestamp()});$("categoryForm").reset();message("categoryMsg","ক্যাটাগরি যোগ হয়েছে।")}catch(err){message("categoryMsg","যোগ করা যায়নি: "+err.message,true)}});
+document.querySelectorAll(".tab").forEach(btn=>btn.addEventListener("click",()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x===btn));$("contentsTab").classList.toggle("hidden",btn.dataset.tab!=="contents");$("categoriesTab").classList.toggle("hidden",btn.dataset.tab!=="categories")}));
+</script>
+</body>
+</html>
