@@ -257,186 +257,196 @@ function fillSelect(id,items,placeholder){
  if(items.some(x=>x.id===old))el.value=old;
 }
 
-function renderCategoryOptions(){
- const sorted=[...categories].sort((a,b)=>(a.name||"").localeCompare(b.name||""));
- fillSelect("category",sorted,"ক্যাটাগরি নির্বাচন করুন");
- fillSelect("parentCategory",sorted,"ক্যাটাগরি নির্বাচন করুন");
- renderSubcategoryOptions();
-}
-
-function renderSubcategoryOptions(){
- const parent=$("category").value;
- const old=$("subcategory").value;
- const list=subcategories.filter(s=>s.categoryId===parent);
- fillSelect("subcategory",list,"সাব-ক্যাটাগরি নির্বাচন করুন");
- if(list.some(s=>s.id===old))$("subcategory").value=old;
-}
-
-$("category").addEventListener("change",renderSubcategoryOptions);
-
-function renderContents(){
- const root=$("contentList");
- root.replaceChildren();
- const q=$("filterInput").value.trim().toLowerCase();
- const list=contents.filter(c=>(c.title||"").toLowerCase().includes(q))
- .sort((a,b)=>(b.updatedAt?.seconds||b.createdAt?.seconds||0)-(a.updatedAt?.seconds||a.createdAt?.seconds||0));
-
- if(!list.length){
-  root.innerHTML='<div class="empty">কোনো কনটেন্ট পাওয়া যায়নি</div>';
-  return;
- }
-
- list.forEach(c=>{
-  const cat=categories.find(x=>x.id===c.categoryId);
-  const sub=subcategories.find(x=>x.id===c.subcategoryId);
-  const box=document.createElement("article");
-  box.className="item";
-  const h=document.createElement("h3");h.textContent=c.title||"শিরোনাম নেই";
-  const meta=document.createElement("div");meta.className="meta";
-  meta.textContent=(cat?.name||c.category||"ক্যাটাগরি নেই")+" → "+(sub?.name||c.subcategory||"সাব-ক্যাটাগরি নেই")+" · "+(c.type||"text")+" · "+(c.published?"প্রকাশিত":"খসড়া");
-  const actions=document.createElement("div");actions.className="actions";
-  const edit=document.createElement("button");edit.className="secondary";edit.textContent="সম্পাদনা";edit.onclick=()=>editContent(c);
-  const del=document.createElement("button");del.className="danger";del.textContent="মুছুন";del.onclick=()=>removeContent(c);
-  actions.append(edit,del);box.append(h,meta,actions);root.append(box);
- });
-}
-
-$("filterInput").addEventListener("input",renderContents);
-
-function resetForm(){
- $("contentForm").reset();
- $("editId").value="";
- $("published").checked=true;
- $("formHeading").textContent="নতুন কনটেন্ট যোগ করুন";
- $("saveBtn").textContent="কনটেন্ট সংরক্ষণ";
- $("cancelEdit").classList.add("hidden");
- renderSubcategoryOptions();
-}
-
-function editContent(c){
- $("editId").value=c.id;
- $("title").value=c.title||"";
- const catId=c.categoryId||categories.find(x=>x.name===c.category)?.id||"";
- $("category").value=catId;
- renderSubcategoryOptions();
- $("subcategory").value=c.subcategoryId||"";
- $("type").value=c.type||"text";
- $("body").value=c.body||"";
- $("mediaUrl").value=c.mediaUrl||"";
- $("published").checked=c.published===true;
- $("formHeading").textContent="কনটেন্ট সম্পাদনা";
- $("saveBtn").textContent="পরিবর্তন সংরক্ষণ";
- $("cancelEdit").classList.remove("hidden");
- window.scrollTo({top:0,behavior:"smooth"});
-}
-
-$("cancelEdit").addEventListener("click",resetForm);
-
-$("contentForm").addEventListener("submit",async e=>{
- e.preventDefault();
- if(!auth.currentUser)return;
- const id=$("editId").value;
- const cat=categories.find(x=>x.id===$("category").value);
- const sub=subcategories.find(x=>x.id===$("subcategory").value);
- if(!cat||!sub){
-  msg("contentMsg","ক্যাটাগরি ও সাব-ক্যাটাগরি নির্বাচন করুন।",true);
-  return;
- }
- const data={
-  title:$("title").value.trim(),
-  categoryId:cat.id,
-  category:cat.name,
-  subcategoryId:sub.id,
-  subcategory:sub.name,
-  type:$("type").value,
-  body:$("body").value.trim(),
-  mediaUrl:$("mediaUrl").value.trim(),
-  published:$("published").checked,
-  updatedAt:serverTimestamp()
- };
- if(!data.title){msg("contentMsg","কনটেন্টের শিরোনাম লিখুন।",true);return}
- try{
-  if(id)await updateDoc(doc(db,"contents",id),data);
-  else await addDoc(collection(db,"contents"),{...data,createdAt:serverTimestamp()});
-  msg("contentMsg",id?"পরিবর্তন সংরক্ষিত হয়েছে।":"নতুন কনটেন্ট যোগ হয়েছে।");
-  resetForm();
- }catch(err){msg("contentMsg","সংরক্ষণ হয়নি: "+err.message,true)}
-});
-
-async function removeContent(c){
- if(!confirm("“"+(c.title||"এই কনটেন্ট")+"” মুছে ফেলবেন?"))return;
- try{await deleteDoc(doc(db,"contents",c.id))}
- catch(err){msg("contentMsg","মুছতে সমস্যা: "+err.message,true)}
-}
-
-$("categoryForm").addEventListener("submit",async e=>{
- e.preventDefault();
- const name=$("categoryName").value.trim();
- if(!name)return;
- if(categories.some(c=>(c.name||"").toLowerCase()===name.toLowerCase())){
-  msg("categoryMsg","এই ক্যাটাগরি আগে থেকেই আছে।",true);return;
- }
- try{
-  await addDoc(collection(db,"categories"),{name,createdAt:serverTimestamp()});
-  $("categoryForm").reset();
-  msg("categoryMsg","নতুন ক্যাটাগরি যোগ হয়েছে।");
- }catch(err){msg("categoryMsg","যোগ করা যায়নি: "+err.message,true)}
-});
-
-$("subcategoryForm").addEventListener("submit",async e=>{
- e.preventDefault();
- const categoryId=$("parentCategory").value;
- const name=$("subcategoryName").value.trim();
- const cat=categories.find(c=>c.id===categoryId);
- if(!cat||!name)return;
- if(subcategories.some(s=>s.categoryId===categoryId&&(s.name||"").toLowerCase()===name.toLowerCase())){
-  msg("subcategoryMsg","এই সাব-ক্যাটাগরি আগে থেকেই আছে।",true);return;
- }
- try{
-  await addDoc(collection(db,"subcategories"),{
-   name,categoryId,category:cat.name,createdAt:serverTimestamp()
-  });
-  $("subcategoryForm").reset();
-  msg("subcategoryMsg","নতুন সাব-ক্যাটাগরি যোগ হয়েছে।");
- }catch(err){msg("subcategoryMsg","যোগ করা যায়নি: "+err.message,true)}
-});
 
 function renderCategories(){
  const root=$("categoryList");
  root.replaceChildren();
+
  if(!categories.length){
-  root.innerHTML='<div class="empty">কোনো ক্যাটাগরি নেই</div>';return;
+  root.innerHTML='<div class="empty">কোনো ক্যাটাগরি নেই</div>';
+  return;
  }
+
  [...categories].sort((a,b)=>(a.name||"").localeCompare(b.name||"")).forEach(cat=>{
-  const box=document.createElement("div");box.className="item";
-  const h=document.createElement("h3");h.textContent="📁 "+cat.name;
+  const box=document.createElement("div");
+  box.className="item";
+
+  const h=document.createElement("h3");
+  h.textContent="📁 "+cat.name;
   box.append(h);
+
+  // Category edit and delete buttons
+  const catActions=document.createElement("div");
+  catActions.className="actions";
+
+  const editCat=document.createElement("button");
+  editCat.className="secondary";
+  editCat.textContent="ক্যাটাগরি সম্পাদনা";
+  editCat.onclick=()=>editCategory(cat);
+
+  const deleteCat=document.createElement("button");
+  deleteCat.className="danger";
+  deleteCat.textContent="ক্যাটাগরি মুছুন";
+  deleteCat.onclick=()=>removeCategory(cat);
+
+  catActions.append(editCat,deleteCat);
+  box.append(catActions);
+
   const subs=subcategories.filter(s=>s.categoryId===cat.id);
+
   if(!subs.length){
-   const p=document.createElement("p");p.className="note";p.textContent="এখনো কোনো সাব-ক্যাটাগরি নেই";box.append(p);
+   const p=document.createElement("p");
+   p.className="note";
+   p.textContent="এখনো কোনো সাব-ক্যাটাগরি নেই";
+   box.append(p);
   }
+
   subs.forEach(sub=>{
-   const tree=document.createElement("div");tree.className="subtree";
-   const title=document.createElement("b");title.textContent="📂 "+sub.name;
-   const del=document.createElement("button");del.className="danger";del.textContent="সাব-ক্যাটাগরি মুছুন";
-   del.onclick=async()=>{
-    const used=contents.some(c=>c.subcategoryId===sub.id);
-    if(used){alert("এই সাব-ক্যাটাগরিতে কনটেন্ট আছে। আগে কনটেন্ট অন্য সাব-ক্যাটাগরিতে সরান বা মুছুন।");return}
-    if(!confirm("“"+sub.name+"” মুছবেন?"))return;
-    try{await deleteDoc(doc(db,"subcategories",sub.id))}
-    catch(err){msg("subcategoryMsg","মুছতে সমস্যা: "+err.message,true)}
-   };
-   tree.append(title,del);box.append(tree);
+   const tree=document.createElement("div");
+   tree.className="subtree";
+
+   const title=document.createElement("b");
+   title.textContent="📂 "+sub.name;
+   tree.append(title);
+
+   const actions=document.createElement("div");
+   actions.className="actions";
+
+   const editSub=document.createElement("button");
+   editSub.className="secondary";
+   editSub.textContent="সম্পাদনা";
+   editSub.onclick=()=>editSubcategory(sub);
+
+   const deleteSub=document.createElement("button");
+   deleteSub.className="danger";
+   deleteSub.textContent="মুছুন";
+   deleteSub.onclick=()=>removeSubcategory(sub);
+
+   actions.append(editSub,deleteSub);
+   tree.append(actions);
+   box.append(tree);
   });
+
   root.append(box);
  });
 }
 
-document.querySelectorAll(".tab").forEach(btn=>{
- btn.addEventListener("click",()=>{
-  document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x===btn));
-  $("contentsTab").classList.toggle("hidden",btn.dataset.tab!=="contents");
-  $("categoriesTab").classList.toggle("hidden",btn.dataset.tab!=="categories");
+// ক্যাটাগরির নাম পরিবর্তন
+async function editCategory(cat){
+ const name=prompt("নতুন ক্যাটাগরির নাম লিখুন:",cat.name||"");
+ if(name===null)return;
+
+ const newName=name.trim();
+ if(!newName)return;
+
+ if(categories.some(c=>c.id!==cat.id&&(c.name||"").toLowerCase()===newName.toLowerCase())){
+  alert("এই ক্যাটাগরি আগে থেকেই আছে।");
+  return;
+ }
+
+ if(!confirm("ক্যাটাগরির নাম পরিবর্তন করবেন?"))return;
+
+ try{
+  await updateDoc(doc(db,"categories",cat.id),{
+   name:newName,
+   updatedAt:serverTimestamp()
+  });
+
+  const relatedSubs=subcategories.filter(s=>s.categoryId===cat.id);
+  const relatedContents=contents.filter(c=>c.categoryId===cat.id);
+
+  for(const sub of relatedSubs){
+   await updateDoc(doc(db,"subcategories",sub.id),{
+    category:newName
+   });
+  }
+
+  for(const item of relatedContents){
+   await updateDoc(doc(db,"contents",item.id),{
+    category:newName
+   });
+  }
+
+  msg("categoryMsg","ক্যাটাগরির নাম পরিবর্তন হয়েছে।");
+ }catch(err){
+  msg("categoryMsg","পরিবর্তন হয়নি: "+err.message,true);
+ }
+}
+
+// ক্যাটাগরি মুছে ফেলা
+async function removeCategory(cat){
+ const hasSubs=subcategories.some(s=>s.categoryId===cat.id);
+ const hasContents=contents.some(c=>c.categoryId===cat.id);
+
+ if(hasSubs||hasContents){
+  alert("এই ক্যাটাগরির অধীনে সাব-ক্যাটাগরি বা কনটেন্ট আছে। আগে সেগুলো সরান বা মুছুন।");
+  return;
+ }
+
+ if(!confirm("“"+cat.name+"” ক্যাটাগরি স্থায়ীভাবে মুছে ফেলবেন?"))return;
+
+ try{
+  await deleteDoc(doc(db,"categories",cat.id));
+  msg("categoryMsg","ক্যাটাগরি মুছে ফেলা হয়েছে।");
+ }catch(err){
+  msg("categoryMsg","মুছতে সমস্যা: "+err.message,true);
+ }
+}
+
+// সাব-ক্যাটাগরির নাম পরিবর্তন
+async function editSubcategory(sub){
+ const name=prompt("নতুন সাব-ক্যাটাগরির নাম লিখুন:",sub.name||"");
+ if(name===null)return;
+
+ const newName=name.trim();
+ if(!newName)return;
+
+ if(subcategories.some(s=>s.id!==sub.id&&s.categoryId===sub.categoryId&&(s.name||"").toLowerCase()===newName.toLowerCase())){
+  alert("এই সাব-ক্যাটাগরি আগে থেকেই আছে।");
+  return;
+ }
+
+ if(!confirm("সাব-ক্যাটাগরির নাম পরিবর্তন করবেন?"))return;
+
+ try{
+  await updateDoc(doc(db,"subcategories",sub.id),{
+   name:newName,
+   updatedAt:serverTimestamp()
+  });
+
+  const relatedContents=contents.filter(c=>c.subcategoryId===sub.id);
+
+  for(const item of relatedContents){
+   await updateDoc(doc(db,"contents",item.id),{
+    subcategory:newName
+   });
+  }
+
+  msg("subcategoryMsg","সাব-ক্যাটাগরির নাম পরিবর্তন হয়েছে।");
+ }catch(err){
+  msg("subcategoryMsg","পরিবর্তন হয়নি: "+err.message,true);
+ }
+}
+
+// সাব-ক্যাটাগরি মুছে ফেলা
+async function removeSubcategory(sub){
+ const used=contents.some(c=>c.subcategoryId===sub.id);
+
+ if(used){
+  alert("এই সাব-ক্যাটাগরিতে কনটেন্ট আছে। আগে কনটেন্ট অন্য সাব-ক্যাটাগরিতে সরান বা মুছুন।");
+  return;
+ }
+
+ if(!confirm("“"+sub.name+"” সাব-ক্যাটাগরি মুছে ফেলবেন?"))return;
+
+ try{
+  await deleteDoc(doc(db,"subcategories",sub.id));
+  msg("subcategoryMsg","সাব-ক্যাটাগরি মুছে ফেলা হয়েছে।");
+ }catch(err){
+  msg("subcategoryMsg","মুছতে সমস্যা: "+err.message,true);
+ }
+}
+
  });
 });
 </script>
