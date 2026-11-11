@@ -6,77 +6,168 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#123c2b">
 <title>ইসলামিক সম্ভার — Admin</title>
+
 <style>
-:root{--g:#123c2b;--g2:#246b4c;--gold:#d79a37;--bg:#f3f7f4;--line:#dce7df;--red:#b42318}
+:root{
+ --g:#123c2b;
+ --g2:#246b4c;
+ --gold:#d79a37;
+ --bg:#f3f7f4;
+ --line:#dce7df;
+ --red:#b42318;
+}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:#18251e;font-family:system-ui,"Noto Sans Bengali",sans-serif}
+body{
+ margin:0;background:var(--bg);color:#18251e;
+ font-family:system-ui,"Noto Sans Bengali",sans-serif;
+}
 button,input,select,textarea{font:inherit}
-button{border:0;border-radius:9px;padding:10px 14px;font-weight:650;cursor:pointer}
-.primary{background:var(--g);color:white}.secondary{background:#e8f0eb;color:var(--g)}
+button{
+ border:0;border-radius:9px;padding:10px 14px;
+ font-weight:650;cursor:pointer;
+}
+button:disabled{opacity:.5;cursor:not-allowed}
+.primary{background:var(--g);color:white}
+.secondary{background:#e8f0eb;color:var(--g)}
 .danger{background:#fff0ee;color:var(--red)}
-header{background:linear-gradient(120deg,var(--g),var(--g2));color:white;padding:18px}
-.head{max-width:1100px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:10px}
-h1{font-size:21px;margin:0}header p{font-size:12px;margin:4px 0 0;color:#dcebe1}
+header{
+ background:linear-gradient(120deg,var(--g),var(--g2));
+ color:white;padding:18px;
+}
+.head{
+ max-width:1100px;margin:auto;display:flex;
+ justify-content:space-between;align-items:center;gap:10px;
+}
+h1{font-size:21px;margin:0}
+header p{font-size:12px;margin:4px 0 0;color:#dcebe1}
 main{max-width:1100px;margin:22px auto;padding:0 14px}
-.panel{background:white;border:1px solid var(--line);border-radius:15px;padding:17px;box-shadow:0 4px 18px #163d280c}
+.panel{
+ background:white;border:1px solid var(--line);
+ border-radius:15px;padding:17px;
+ box-shadow:0 4px 18px #163d280c;
+}
 .login{max-width:430px;margin:7vh auto}
 h2{font-size:18px;margin:0 0 14px}
-label{display:block;font-size:13px;font-weight:700;margin:12px 0 6px}
-input,select,textarea{width:100%;border:1px solid #ccd8cf;border-radius:9px;padding:11px;background:white;color:#18251e}
+label{
+ display:block;font-size:13px;font-weight:700;
+ margin:12px 0 6px;
+}
+input,select,textarea{
+ width:100%;border:1px solid #ccd8cf;
+ border-radius:9px;padding:11px;background:white;color:#18251e;
+}
 textarea{min-height:120px;resize:vertical}
 .note{font-size:12px;color:#68766d;line-height:1.6}
 .hidden{display:none!important}
-.status{padding:10px;margin-top:12px;background:#edf5ef;border-radius:9px;font-size:13px;white-space:pre-wrap}
+.status{
+ padding:10px;margin-top:12px;background:#edf5ef;
+ border-radius:9px;font-size:13px;white-space:pre-wrap;
+}
 .error{background:#fff0ee;color:var(--red)}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:15px}
+.stats{
+ display:grid;grid-template-columns:repeat(3,1fr);
+ gap:10px;margin-bottom:15px;
+}
 .stat{background:#eaf2ec;border-radius:11px;padding:12px}
 .stat b{display:block;font-size:23px;color:var(--g)}
 .stat span{font-size:12px;color:#68766d}
 .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
-.tab{background:#e8f0eb;color:var(--g)}.tab.active{background:var(--g);color:white}
-.layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,1.2fr);gap:14px;align-items:start}
-.item{border:1px solid var(--line);border-radius:11px;padding:12px;margin-top:10px}
+.tab{background:#e8f0eb;color:var(--g)}
+.tab.active{background:var(--g);color:white}
+.layout{
+ display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,1.2fr);
+ gap:14px;align-items:start;
+}
+.item{
+ border:1px solid var(--line);border-radius:11px;
+ padding:12px;margin-top:10px;
+}
 .item h3{font-size:15px;margin:0 0 5px}
 .meta{font-size:12px;color:#68766d;line-height:1.7}
-.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}
-.actions button{font-size:12px;padding:7px 10px}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.actions{
+ display:flex;gap:7px;flex-wrap:wrap;margin-top:10px;
+}
+.actions button{font-size:12px;padding:8px 10px}
 .check{display:flex;align-items:center;gap:8px}
 .check input{width:auto}
 .empty{text-align:center;padding:18px;color:#68766d}
-.tree{border-left:3px solid #dce7df;padding-left:12px;margin:12px 0}
-.subtree{margin:8px 0 8px 14px;padding:9px;border:1px solid var(--line);border-radius:9px}
-@media(max-width:700px){.layout{grid-template-columns:1fr}.head{align-items:flex-start}h1{font-size:18px}}
-@media(max-width:420px){.row{grid-template-columns:1fr}}
+.subtree{
+ margin:10px 0 10px 12px;padding:11px;
+ border:1px solid var(--line);border-radius:9px;
+ background:#f9fbf9;
+}
+.category-actions{
+ display:flex;gap:7px;flex-wrap:wrap;
+ margin:10px 0;
+}
+.category-actions button{font-size:12px;padding:9px 11px}
+.sub-title{font-weight:700;font-size:14px}
+.inline-form{
+ margin-top:10px;padding:10px;
+ background:#edf5ef;border-radius:9px;
+}
+.inline-form input{margin-bottom:8px}
+@media(max-width:700px){
+ .layout{grid-template-columns:1fr}
+ .head{align-items:flex-start}
+ h1{font-size:18px}
+}
+@media(max-width:420px){
+ .stats{grid-template-columns:repeat(3,1fr)}
+ .stat{padding:9px}
+ .stat b{font-size:19px}
+}
 </style>
 </head>
+
 <body>
+
 <header>
  <div class="head">
-  <div><h1>☪ ইসলামিক সম্ভার</h1><p>Admin Panel · কনটেন্ট পরিচালনা</p></div>
+  <div>
+   <h1>☪ ইসলামিক সম্ভার</h1>
+   <p>Admin Panel · কনটেন্ট পরিচালনা</p>
+  </div>
   <button id="logoutBtn" class="secondary hidden">লগআউট</button>
  </div>
 </header>
 
 <main>
+
 <section id="loginView" class="panel login">
  <h2>অ্যাডমিন লগইন</h2>
- <p class="note">Firebase Authentication-এর Admin ইমেইল ও পাসওয়ার্ড দিন।</p>
+ <p class="note">Firebase Authentication-এর ইমেইল ও পাসওয়ার্ড দিন।</p>
+
  <form id="loginForm">
   <label>ইমেইল</label>
   <input id="email" type="email" required>
+
   <label>পাসওয়ার্ড</label>
   <input id="password" type="password" required>
-  <button class="primary" style="width:100%;margin-top:15px">লগইন করুন</button>
+
+  <button class="primary" style="width:100%;margin-top:15px">
+   লগইন করুন
+  </button>
  </form>
+
  <div id="loginMsg" class="status hidden"></div>
 </section>
 
 <section id="appView" class="hidden">
+
  <div class="stats">
-  <div class="stat"><b id="totalCount">০</b><span>মোট কনটেন্ট</span></div>
-  <div class="stat"><b id="publishedCount">০</b><span>প্রকাশিত</span></div>
-  <div class="stat"><b id="categoryCount">০</b><span>ক্যাটাগরি</span></div>
+  <div class="stat">
+   <b id="totalCount">০</b>
+   <span>মোট কনটেন্ট</span>
+  </div>
+  <div class="stat">
+   <b id="publishedCount">০</b>
+   <span>প্রকাশিত</span>
+  </div>
+  <div class="stat">
+   <b id="categoryCount">০</b>
+   <span>ক্যাটাগরি</span>
+  </div>
  </div>
 
  <div class="tabs">
@@ -84,9 +175,13 @@ textarea{min-height:120px;resize:vertical}
   <button class="tab" data-tab="categories">ক্যাটাগরি ও সাব-ক্যাটাগরি</button>
  </div>
 
+ <!-- CONTENTS -->
+
  <section id="contentsTab" class="layout">
+
   <div class="panel">
    <h2 id="formHeading">নতুন কনটেন্ট যোগ করুন</h2>
+
    <form id="contentForm">
     <input id="editId" type="hidden">
 
@@ -113,60 +208,107 @@ textarea{min-height:120px;resize:vertical}
 
     <label>ফাইল/মিডিয়ার URL</label>
     <input id="mediaUrl" type="url" placeholder="https://...">
-    <p class="note">Firebase Storage-এর জন্য পেইড প্ল্যান প্রয়োজন হতে পারে। তাই আপাতত বাইরের হোস্ট করা PDF, অডিও বা ছবির লিংক ব্যবহার করুন।</p>
 
-    <label class="check"><input id="published" type="checkbox" checked> প্রকাশিত</label>
+    <p class="note">
+     আপাতত বাইরের হোস্ট করা PDF, অডিও, ছবি বা ভিডিওর লিংক ব্যবহার করুন।
+    </p>
+
+    <label class="check">
+     <input id="published" type="checkbox" checked>
+     প্রকাশিত
+    </label>
+
     <div class="actions">
-     <button class="primary" type="submit" id="saveBtn">কনটেন্ট সংরক্ষণ</button>
-     <button class="secondary hidden" type="button" id="cancelEdit">বাতিল</button>
+     <button class="primary" type="submit" id="saveBtn">
+      কনটেন্ট সংরক্ষণ
+     </button>
+     <button class="secondary hidden" type="button" id="cancelEdit">
+      বাতিল
+     </button>
     </div>
    </form>
+
    <div id="contentMsg" class="status hidden"></div>
   </div>
 
   <div class="panel">
    <h2>কনটেন্ট তালিকা</h2>
    <input id="filterInput" placeholder="শিরোনাম দিয়ে খুঁজুন...">
-   <div id="contentList"><div class="empty">লোড হচ্ছে...</div></div>
+   <div id="contentList">
+    <div class="empty">লোড হচ্ছে...</div>
+   </div>
   </div>
+
  </section>
 
+ <!-- CATEGORIES -->
+
  <section id="categoriesTab" class="layout hidden">
+
   <div class="panel">
+
    <h2>১. নতুন ক্যাটাগরি যোগ করুন</h2>
+
    <form id="categoryForm">
     <label>ক্যাটাগরির নাম</label>
     <input id="categoryName" required placeholder="যেমন: কোরআন">
-    <button class="primary" style="margin-top:12px">＋ ক্যাটাগরি যোগ করুন</button>
+    <button class="primary" style="margin-top:12px">
+     ＋ ক্যাটাগরি যোগ করুন
+    </button>
    </form>
+
    <div id="categoryMsg" class="status hidden"></div>
 
    <hr style="border:0;border-top:1px solid var(--line);margin:20px 0">
 
    <h2>২. নতুন সাব-ক্যাটাগরি যোগ করুন</h2>
+
    <form id="subcategoryForm">
     <label>ক্যাটাগরি নির্বাচন করুন</label>
     <select id="parentCategory" required></select>
+
     <label>সাব-ক্যাটাগরির নাম</label>
     <input id="subcategoryName" required placeholder="যেমন: সূরা">
-    <button class="primary" style="margin-top:12px">＋ সাব-ক্যাটাগরি যোগ করুন</button>
+
+    <button class="primary" style="margin-top:12px">
+     ＋ সাব-ক্যাটাগরি যোগ করুন
+    </button>
    </form>
+
    <div id="subcategoryMsg" class="status hidden"></div>
+
   </div>
 
   <div class="panel">
    <h2>ক্যাটাগরি ও সাব-ক্যাটাগরি তালিকা</h2>
-   <p class="note">এখানে প্রতিটি ক্যাটাগরির অধীনে তার সাব-ক্যাটাগরি দেখা যাবে।</p>
-   <div id="categoryList"><div class="empty">লোড হচ্ছে...</div></div>
+   <p class="note">
+    প্রতিটি ক্যাটাগরির পাশে সম্পাদনা, মুছুন ও সাব-ক্যাটাগরি যোগ করার বাটন থাকবে।
+   </p>
+
+   <div id="categoryList">
+    <div class="empty">লোড হচ্ছে...</div>
+   </div>
   </div>
+
  </section>
+
 </section>
 </main>
 
 <script type="module">
-import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,signOut} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import {getFirestore,collection,addDoc,updateDoc,deleteDoc,doc,onSnapshot,serverTimestamp,query,where,getDocs} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+import {initializeApp}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+ getAuth,onAuthStateChanged,
+ signInWithEmailAndPassword,signOut
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import {
+ getFirestore,collection,addDoc,updateDoc,
+ deleteDoc,doc,onSnapshot,serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig={
  apiKey:"AIzaSyAAlcAg9uTyv8FXgqWp5mIgKJRqr8gzLkk",
@@ -180,9 +322,12 @@ const firebaseConfig={
 const app=initializeApp(firebaseConfig);
 const auth=getAuth(app);
 const db=getFirestore(app);
+
 const $=id=>document.getElementById(id);
 
-let categories=[],subcategories=[],contents=[];
+let categories=[];
+let subcategories=[];
+let contents=[];
 let unsub=[];
 
 function msg(id,text,error=false){
@@ -191,7 +336,10 @@ function msg(id,text,error=false){
  el.classList.remove("hidden","error");
  if(error)el.classList.add("error");
 }
-function bn(n){return Number(n||0).toLocaleString("bn-BD")}
+
+function bn(n){
+ return Number(n||0).toLocaleString("bn-BD");
+}
 
 function showApp(user){
  $("loginView").classList.toggle("hidden",!!user);
@@ -202,9 +350,14 @@ function showApp(user){
 $("loginForm").addEventListener("submit",async e=>{
  e.preventDefault();
  msg("loginMsg","লগইন হচ্ছে...");
+
  try{
-  await signInWithEmailAndPassword(auth,$("email").value.trim(),$("password").value);
- }catch(err){msg("loginMsg","লগইন হয়নি: "+err.message,true)}
+  await signInWithEmailAndPassword(
+   auth,$("email").value.trim(),$("password").value
+  );
+ }catch(err){
+  msg("loginMsg","লগইন হয়নি: "+err.message,true);
+ }
 });
 
 $("logoutBtn").addEventListener("click",()=>signOut(auth));
@@ -213,10 +366,12 @@ onAuthStateChanged(auth,user=>{
  showApp(user);
  unsub.forEach(fn=>fn());
  unsub=[];
+
  if(user)startListeners();
 });
 
 function startListeners(){
+
  unsub.push(onSnapshot(collection(db,"categories"),snap=>{
   categories=snap.docs.map(d=>({id:d.id,...d.data()}));
   renderCategoryOptions();
@@ -233,32 +388,295 @@ function startListeners(){
  unsub.push(onSnapshot(collection(db,"contents"),snap=>{
   contents=snap.docs.map(d=>({id:d.id,...d.data()}));
   renderContents();
+  renderCategories();
   updateStats();
  },err=>msg("contentMsg","কনটেন্ট লোড হয়নি: "+err.message,true)));
+
 }
 
 function updateStats(){
  $("totalCount").textContent=bn(contents.length);
- $("publishedCount").textContent=bn(contents.filter(c=>c.published===true).length);
+ $("publishedCount").textContent=
+  bn(contents.filter(c=>c.published===true).length);
  $("categoryCount").textContent=bn(categories.length);
 }
 
 function fillSelect(id,items,placeholder){
- const el=$(id),old=el.value;
+ const el=$(id);
+ const old=el.value;
  el.replaceChildren();
+
  const first=document.createElement("option");
- first.value="";first.textContent=placeholder;
+ first.value="";
+ first.textContent=placeholder;
  el.append(first);
+
  items.forEach(item=>{
   const op=document.createElement("option");
-  op.value=item.id;op.textContent=item.name||"নাম নেই";
+  op.value=item.id;
+  op.textContent=item.name||"নাম নেই";
   el.append(op);
  });
+
  if(items.some(x=>x.id===old))el.value=old;
 }
 
+function renderCategoryOptions(){
+ const sorted=[...categories].sort(
+  (a,b)=>(a.name||"").localeCompare(b.name||"")
+ );
+
+ fillSelect("category",sorted,"ক্যাটাগরি নির্বাচন করুন");
+ fillSelect("parentCategory",sorted,"ক্যাটাগরি নির্বাচন করুন");
+ renderSubcategoryOptions();
+}
+
+function renderSubcategoryOptions(){
+ const parent=$("category").value;
+ const old=$("subcategory").value;
+
+ const list=subcategories.filter(s=>s.categoryId===parent);
+
+ fillSelect("subcategory",list,"সাব-ক্যাটাগরি নির্বাচন করুন");
+
+ if(list.some(s=>s.id===old)){
+  $("subcategory").value=old;
+ }
+}
+
+$("category").addEventListener("change",renderSubcategoryOptions);
+
+<!-- CONTENT MANAGEMENT -->
+
+function renderContents(){
+
+ const root=$("contentList");
+ root.replaceChildren();
+
+ const q=$("filterInput").value.trim().toLowerCase();
+
+ const list=contents.filter(c=>
+  (c.title||"").toLowerCase().includes(q)
+ ).sort((a,b)=>
+  (b.updatedAt?.seconds||b.createdAt?.seconds||0)-
+  (a.updatedAt?.seconds||a.createdAt?.seconds||0)
+ );
+
+ if(!list.length){
+  root.innerHTML='<div class="empty">কোনো কনটেন্ট পাওয়া যায়নি</div>';
+  return;
+ }
+
+ list.forEach(c=>{
+
+  const cat=categories.find(x=>x.id===c.categoryId);
+  const sub=subcategories.find(x=>x.id===c.subcategoryId);
+
+  const box=document.createElement("article");
+  box.className="item";
+
+  const h=document.createElement("h3");
+  h.textContent=c.title||"শিরোনাম নেই";
+
+  const meta=document.createElement("div");
+  meta.className="meta";
+  meta.textContent=
+   (cat?.name||c.category||"ক্যাটাগরি নেই")+" → "+
+   (sub?.name||c.subcategory||"সাব-ক্যাটাগরি নেই")+" · "+
+   (c.type||"text")+" · "+
+   (c.published?"প্রকাশিত":"খসড়া");
+
+  const actions=document.createElement("div");
+  actions.className="actions";
+
+  const edit=document.createElement("button");
+  edit.className="secondary";
+  edit.textContent="সম্পাদনা";
+  edit.onclick=()=>editContent(c);
+
+  const del=document.createElement("button");
+  del.className="danger";
+  del.textContent="মুছুন";
+  del.onclick=()=>removeContent(c);
+
+  actions.append(edit,del);
+  box.append(h,meta,actions);
+  root.append(box);
+ });
+}
+
+$("filterInput").addEventListener("input",renderContents);
+
+function resetForm(){
+ $("contentForm").reset();
+ $("editId").value="";
+ $("published").checked=true;
+ $("formHeading").textContent="নতুন কনটেন্ট যোগ করুন";
+ $("saveBtn").textContent="কনটেন্ট সংরক্ষণ";
+ $("cancelEdit").classList.add("hidden");
+ renderSubcategoryOptions();
+}
+
+function editContent(c){
+
+ $("editId").value=c.id;
+ $("title").value=c.title||"";
+
+ const catId=c.categoryId||
+  categories.find(x=>x.name===c.category)?.id||"";
+
+ $("category").value=catId;
+ renderSubcategoryOptions();
+
+ $("subcategory").value=c.subcategoryId||"";
+ $("type").value=c.type||"text";
+ $("body").value=c.body||"";
+ $("mediaUrl").value=c.mediaUrl||"";
+ $("published").checked=c.published===true;
+
+ $("formHeading").textContent="কনটেন্ট সম্পাদনা";
+ $("saveBtn").textContent="পরিবর্তন সংরক্ষণ";
+ $("cancelEdit").classList.remove("hidden");
+
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+
+$("cancelEdit").addEventListener("click",resetForm);
+
+$("contentForm").addEventListener("submit",async e=>{
+ e.preventDefault();
+
+ if(!auth.currentUser)return;
+
+ const id=$("editId").value;
+
+ const cat=categories.find(x=>x.id===$("category").value);
+ const sub=subcategories.find(x=>x.id===$("subcategory").value);
+
+ if(!cat||!sub){
+  msg("contentMsg","ক্যাটাগরি ও সাব-ক্যাটাগরি নির্বাচন করুন।",true);
+  return;
+ }
+
+ const data={
+  title:$("title").value.trim(),
+  categoryId:cat.id,
+  category:cat.name,
+  subcategoryId:sub.id,
+  subcategory:sub.name,
+  type:$("type").value,
+  body:$("body").value.trim(),
+  mediaUrl:$("mediaUrl").value.trim(),
+  published:$("published").checked,
+  updatedAt:serverTimestamp()
+ };
+
+ if(!data.title){
+  msg("contentMsg","কনটেন্টের শিরোনাম লিখুন।",true);
+  return;
+ }
+
+ try{
+
+  if(id){
+   await updateDoc(doc(db,"contents",id),data);
+  }else{
+   await addDoc(collection(db,"contents"),{
+    ...data,createdAt:serverTimestamp()
+   });
+  }
+
+  msg("contentMsg",id?
+   "পরিবর্তন সংরক্ষিত হয়েছে।":
+   "নতুন কনটেন্ট যোগ হয়েছে।"
+  );
+
+  resetForm();
+
+ }catch(err){
+  msg("contentMsg","সংরক্ষণ হয়নি: "+err.message,true);
+ }
+});
+
+async function removeContent(c){
+
+ if(!confirm("“"+(c.title||"এই কনটেন্ট")+"” মুছে ফেলবেন?"))return;
+
+ try{
+  await deleteDoc(doc(db,"contents",c.id));
+  msg("contentMsg","কনটেন্ট মুছে ফেলা হয়েছে।");
+ }catch(err){
+  msg("contentMsg","মুছতে সমস্যা: "+err.message,true);
+ }
+}
+
+<!-- CATEGORY ADD -->
+
+$("categoryForm").addEventListener("submit",async e=>{
+ e.preventDefault();
+
+ const name=$("categoryName").value.trim();
+ if(!name)return;
+
+ if(categories.some(c=>
+  (c.name||"").toLowerCase()===name.toLowerCase()
+ )){
+  msg("categoryMsg","এই ক্যাটাগরি আগে থেকেই আছে।",true);
+  return;
+ }
+
+ try{
+  await addDoc(collection(db,"categories"),{
+   name,createdAt:serverTimestamp()
+  });
+
+  $("categoryForm").reset();
+  msg("categoryMsg","নতুন ক্যাটাগরি যোগ হয়েছে।");
+
+ }catch(err){
+  msg("categoryMsg","যোগ করা যায়নি: "+err.message,true);
+ }
+});
+
+<!-- SUBCATEGORY ADD -->
+
+$("subcategoryForm").addEventListener("submit",async e=>{
+ e.preventDefault();
+
+ const categoryId=$("parentCategory").value;
+ const name=$("subcategoryName").value.trim();
+ const cat=categories.find(c=>c.id===categoryId);
+
+ if(!cat||!name)return;
+
+ if(subcategories.some(s=>
+  s.categoryId===categoryId&&
+  (s.name||"").toLowerCase()===name.toLowerCase()
+ )){
+  msg("subcategoryMsg","এই সাব-ক্যাটাগরি আগে থেকেই আছে।",true);
+  return;
+ }
+
+ try{
+  await addDoc(collection(db,"subcategories"),{
+   name,
+   categoryId,
+   category:cat.name,
+   createdAt:serverTimestamp()
+  });
+
+  $("subcategoryForm").reset();
+  msg("subcategoryMsg","নতুন সাব-ক্যাটাগরি যোগ হয়েছে।");
+
+ }catch(err){
+  msg("subcategoryMsg","যোগ করা যায়নি: "+err.message,true);
+ }
+});
+
+<!-- CATEGORY AND SUBCATEGORY LIST -->
 
 function renderCategories(){
+
  const root=$("categoryList");
  root.replaceChildren();
 
@@ -267,30 +685,44 @@ function renderCategories(){
   return;
  }
 
- [...categories].sort((a,b)=>(a.name||"").localeCompare(b.name||"")).forEach(cat=>{
+ [...categories].sort((a,b)=>
+  (a.name||"").localeCompare(b.name||"")
+ ).forEach(cat=>{
+
   const box=document.createElement("div");
   box.className="item";
 
   const h=document.createElement("h3");
-  h.textContent="📁 "+cat.name;
+  h.textContent="📁 "+(cat.name||"নাম নেই");
   box.append(h);
 
-  // Category edit and delete buttons
-  const catActions=document.createElement("div");
-  catActions.className="actions";
+  // CATEGORY BUTTONS
+  const actions=document.createElement("div");
+  actions.className="category-actions";
 
-  const editCat=document.createElement("button");
-  editCat.className="secondary";
-  editCat.textContent="ক্যাটাগরি সম্পাদনা";
-  editCat.onclick=()=>editCategory(cat);
+  const edit=document.createElement("button");
+  edit.className="secondary";
+  edit.textContent="✏️ সম্পাদনা";
+  edit.onclick=()=>editCategory(cat);
 
-  const deleteCat=document.createElement("button");
-  deleteCat.className="danger";
-  deleteCat.textContent="ক্যাটাগরি মুছুন";
-  deleteCat.onclick=()=>removeCategory(cat);
+  const del=document.createElement("button");
+  del.className="danger";
+  del.textContent="🗑 ক্যাটাগরি মুছুন";
+  del.onclick=()=>removeCategory(cat);
 
-  catActions.append(editCat,deleteCat);
-  box.append(catActions);
+  const addSub=document.createElement("button");
+  addSub.className="primary";
+  addSub.textContent="＋ সাব-ক্যাটাগরি যোগ";
+  addSub.onclick=()=>{
+   $("parentCategory").value=cat.id;
+   $("subcategoryName").focus();
+   $("subcategoryForm").scrollIntoView({
+    behavior:"smooth",block:"center"
+   });
+  };
+
+  actions.append(edit,del,addSub);
+  box.append(actions);
 
   const subs=subcategories.filter(s=>s.categoryId===cat.id);
 
@@ -302,28 +734,29 @@ function renderCategories(){
   }
 
   subs.forEach(sub=>{
+
    const tree=document.createElement("div");
    tree.className="subtree";
 
-   const title=document.createElement("b");
-   title.textContent="📂 "+sub.name;
-   tree.append(title);
+   const title=document.createElement("div");
+   title.className="sub-title";
+   title.textContent="📂 "+(sub.name||"নাম নেই");
 
-   const actions=document.createElement("div");
-   actions.className="actions";
+   const subActions=document.createElement("div");
+   subActions.className="actions";
 
    const editSub=document.createElement("button");
    editSub.className="secondary";
-   editSub.textContent="সম্পাদনা";
+   editSub.textContent="✏️ সম্পাদনা";
    editSub.onclick=()=>editSubcategory(sub);
 
    const deleteSub=document.createElement("button");
    deleteSub.className="danger";
-   deleteSub.textContent="মুছুন";
+   deleteSub.textContent="🗑 মুছুন";
    deleteSub.onclick=()=>removeSubcategory(sub);
 
-   actions.append(editSub,deleteSub);
-   tree.append(actions);
+   subActions.append(editSub,deleteSub);
+   tree.append(title,subActions);
    box.append(tree);
   });
 
@@ -331,15 +764,21 @@ function renderCategories(){
  });
 }
 
-// ক্যাটাগরির নাম পরিবর্তন
+// EDIT CATEGORY
+
 async function editCategory(cat){
+
  const name=prompt("নতুন ক্যাটাগরির নাম লিখুন:",cat.name||"");
+
  if(name===null)return;
 
  const newName=name.trim();
  if(!newName)return;
 
- if(categories.some(c=>c.id!==cat.id&&(c.name||"").toLowerCase()===newName.toLowerCase())){
+ if(categories.some(c=>
+  c.id!==cat.id&&
+  (c.name||"").toLowerCase()===newName.toLowerCase()
+ )){
   alert("এই ক্যাটাগরি আগে থেকেই আছে।");
   return;
  }
@@ -347,61 +786,81 @@ async function editCategory(cat){
  if(!confirm("ক্যাটাগরির নাম পরিবর্তন করবেন?"))return;
 
  try{
+
   await updateDoc(doc(db,"categories",cat.id),{
    name:newName,
    updatedAt:serverTimestamp()
   });
 
-  const relatedSubs=subcategories.filter(s=>s.categoryId===cat.id);
-  const relatedContents=contents.filter(c=>c.categoryId===cat.id);
-
-  for(const sub of relatedSubs){
+  for(const sub of subcategories.filter(s=>s.categoryId===cat.id)){
    await updateDoc(doc(db,"subcategories",sub.id),{
     category:newName
    });
   }
 
-  for(const item of relatedContents){
+  for(const item of contents.filter(c=>c.categoryId===cat.id)){
    await updateDoc(doc(db,"contents",item.id),{
     category:newName
    });
   }
 
   msg("categoryMsg","ক্যাটাগরির নাম পরিবর্তন হয়েছে।");
+
  }catch(err){
   msg("categoryMsg","পরিবর্তন হয়নি: "+err.message,true);
  }
 }
 
-// ক্যাটাগরি মুছে ফেলা
-async function removeCategory(cat){
- const hasSubs=subcategories.some(s=>s.categoryId===cat.id);
- const hasContents=contents.some(c=>c.categoryId===cat.id);
+// DELETE CATEGORY
 
- if(hasSubs||hasContents){
-  alert("এই ক্যাটাগরির অধীনে সাব-ক্যাটাগরি বা কনটেন্ট আছে। আগে সেগুলো সরান বা মুছুন।");
+async function removeCategory(cat){
+
+ const hasSubs=subcategories.some(s=>s.categoryId===cat.id);
+
+ const hasContents=contents.some(c=>
+  c.categoryId===cat.id||
+  c.category===cat.name
+ );
+
+ if(hasSubs){
+  alert("এই ক্যাটাগরির অধীনে সাব-ক্যাটাগরি আছে। আগে সেগুলো মুছুন।");
+  return;
+ }
+
+ if(hasContents){
+  alert("এই ক্যাটাগরির অধীনে কনটেন্ট আছে। আগে সেই কনটেন্ট মুছুন বা অন্য ক্যাটাগরিতে সরান।");
   return;
  }
 
  if(!confirm("“"+cat.name+"” ক্যাটাগরি স্থায়ীভাবে মুছে ফেলবেন?"))return;
 
  try{
+
   await deleteDoc(doc(db,"categories",cat.id));
-  msg("categoryMsg","ক্যাটাগরি মুছে ফেলা হয়েছে।");
+
+  msg("categoryMsg","ক্যাটাগরি সফলভাবে মুছে ফেলা হয়েছে।");
+
  }catch(err){
-  msg("categoryMsg","মুছতে সমস্যা: "+err.message,true);
+  msg("categoryMsg","ক্যাটাগরি মুছতে সমস্যা: "+err.message,true);
  }
 }
 
-// সাব-ক্যাটাগরির নাম পরিবর্তন
+// EDIT SUBCATEGORY
+
 async function editSubcategory(sub){
+
  const name=prompt("নতুন সাব-ক্যাটাগরির নাম লিখুন:",sub.name||"");
+
  if(name===null)return;
 
  const newName=name.trim();
  if(!newName)return;
 
- if(subcategories.some(s=>s.id!==sub.id&&s.categoryId===sub.categoryId&&(s.name||"").toLowerCase()===newName.toLowerCase())){
+ if(subcategories.some(s=>
+  s.id!==sub.id&&
+  s.categoryId===sub.categoryId&&
+  (s.name||"").toLowerCase()===newName.toLowerCase()
+ )){
   alert("এই সাব-ক্যাটাগরি আগে থেকেই আছে।");
   return;
  }
@@ -409,27 +868,29 @@ async function editSubcategory(sub){
  if(!confirm("সাব-ক্যাটাগরির নাম পরিবর্তন করবেন?"))return;
 
  try{
+
   await updateDoc(doc(db,"subcategories",sub.id),{
    name:newName,
    updatedAt:serverTimestamp()
   });
 
-  const relatedContents=contents.filter(c=>c.subcategoryId===sub.id);
-
-  for(const item of relatedContents){
+  for(const item of contents.filter(c=>c.subcategoryId===sub.id)){
    await updateDoc(doc(db,"contents",item.id),{
     subcategory:newName
    });
   }
 
   msg("subcategoryMsg","সাব-ক্যাটাগরির নাম পরিবর্তন হয়েছে।");
+
  }catch(err){
   msg("subcategoryMsg","পরিবর্তন হয়নি: "+err.message,true);
  }
 }
 
-// সাব-ক্যাটাগরি মুছে ফেলা
+// DELETE SUBCATEGORY
+
 async function removeSubcategory(sub){
+
  const used=contents.some(c=>c.subcategoryId===sub.id);
 
  if(used){
@@ -440,15 +901,37 @@ async function removeSubcategory(sub){
  if(!confirm("“"+sub.name+"” সাব-ক্যাটাগরি মুছে ফেলবেন?"))return;
 
  try{
+
   await deleteDoc(doc(db,"subcategories",sub.id));
+
   msg("subcategoryMsg","সাব-ক্যাটাগরি মুছে ফেলা হয়েছে।");
+
  }catch(err){
   msg("subcategoryMsg","মুছতে সমস্যা: "+err.message,true);
  }
 }
 
+// TAB BUTTONS
+
+document.querySelectorAll(".tab").forEach(btn=>{
+
+ btn.addEventListener("click",()=>{
+
+  document.querySelectorAll(".tab").forEach(x=>
+   x.classList.toggle("active",x===btn)
+  );
+
+  $("contentsTab").classList.toggle(
+   "hidden",btn.dataset.tab!=="contents"
+  );
+
+  $("categoriesTab").classList.toggle(
+   "hidden",btn.dataset.tab!=="categories"
+  );
+
  });
 });
+
 </script>
 </body>
 </html>
